@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gadget Sixty Nine | Premium Tech Hub</title>
+    <script src="theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Using Phosphor Icons for a premium look -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <header id="header">
+        <div class="container header-content">
+            <a href="#" class="logo">Gadget<span>Sixty Nine</span></a>
+
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Search gadgets...">
+            </div>
+
+            <div class="header-actions">
+                <button class="btn-icon" id="theme-toggle" title="Toggle Dark/Light Mode"><i class="ph ph-moon"></i></button>
+                <a href="login.html" class="btn-icon"><i class="ph ph-user"></i></a>
+                <a href="cart.html" class="btn-icon" id="cartBtn">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="cart-count" id="cart-count-badge">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+
+    <!-- Hero Banner Section -->
+    <section class="hero-banners container" style="margin-top: 110px;">
+        <div class="main-banner full-width">
+            <img src="banner.png" alt="Welcome to Gadget Sixty Nine">
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories container" style="margin-top: 40px;">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="category-grid">
+            <div class="category-card"
+                onclick="document.getElementById('filter-category').value='Smartphone'; document.getElementById('filter-category').dispatchEvent(new Event('change')); document.getElementById('shop-section').scrollIntoView({behavior: 'smooth'})">
+                <i class="ph ph-device-mobile category-icon"></i>
+                <h3>Smartphones</h3>
+            </div>
+            <div class="category-card"
+                onclick="document.getElementById('filter-category').value='Audio'; document.getElementById('filter-category').dispatchEvent(new Event('change')); document.getElementById('shop-section').scrollIntoView({behavior: 'smooth'})">
+                <i class="ph ph-headphones category-icon"></i>
+                <h3>Audio & Music</h3>
+            </div>
+            <div class="category-card"
+                onclick="document.getElementById('filter-category').value='Smartwatch'; document.getElementById('filter-category').dispatchEvent(new Event('change')); document.getElementById('shop-section').scrollIntoView({behavior: 'smooth'})">
+                <i class="ph ph-watch category-icon"></i>
+                <h3>Smartwatches</h3>
+            </div>
+            <div class="category-card"
+                onclick="document.getElementById('filter-category').value='Accessories'; document.getElementById('filter-category').dispatchEvent(new Event('change')); document.getElementById('shop-section').scrollIntoView({behavior: 'smooth'})">
+                <i class="ph ph-plug category-icon"></i>
+                <h3>Accessories</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands & Products Section -->
+    <section id="shop-section" class="container" style="margin-bottom: 80px; margin-top: 40px;">
+        <h2 class="section-title">Shop By Brands</h2>
+        <div class="brand-bar">
+            <div class="brand-item active" onclick="filterByBrand('all', this)">All Brands</div>
+            <div class="brand-item" onclick="filterByBrand('Apple', this)">Apple</div>
+            <div class="brand-item" onclick="filterByBrand('Samsung', this)">Samsung</div>
+            <div class="brand-item" onclick="filterByBrand('OnePlus', this)">OnePlus</div>
+            <div class="brand-item" onclick="filterByBrand('Oppo', this)">Oppo</div>
+            <div class="brand-item" onclick="filterByBrand('Vivo', this)">Vivo</div>
+            <div class="brand-item" onclick="filterByBrand('Realme', this)">Realme</div>
+            <div class="brand-item" onclick="filterByBrand('Honor', this)">Honor</div>
+            <div class="brand-item" onclick="filterByBrand('Xiaomi', this)">Xiaomi</div>
+            <div class="brand-item" onclick="filterByBrand('Other', this)">Other</div>
+        </div>
+
+        <!-- Filter Bar (Compact) -->
+        <div class="filter-bar" style="justify-content: flex-end; margin-top: 20px;">
+            <select id="filter-category" class="filter-select">
+                <option value="all">All Categories</option>
+                <option value="Smartphone">Smartphones</option>
+                <option value="Audio">Audio</option>
+                <option value="Smartwatch">Smartwatches</option>
+                <option value="Accessories">Accessories</option>
+            </select>
+            <select id="filter-brand" class="filter-select" style="display:none;">
+                <option value="all">All Brands</option>
+                <option value="Apple">Apple</option>
+                <option value="Samsung">Samsung</option>
+                <option value="OnePlus">OnePlus</option>
+                <option value="Oppo">Oppo</option>
+                <option value="Vivo">Vivo</option>
+                <option value="Realme">Realme</option>
+                <option value="Honor">Honor</option>
+                <option value="Xiaomi">Xiaomi</option>
+                <option value="Other">Other</option>
+            </select>
+            <select id="filter-price" class="filter-select">
+                <option value="all">All Prices</option>
+                <option value="under10k">Under ৳10,000</option>
+                <option value="10k-50k">৳10,000 - ৳50,000</option>
+                <option value="over50k">Over ৳50,000</option>
+            </select>
+        </div>
+
+        <div class="products-grid" id="public-products-grid" style="margin-top: 30px;">
+            <!-- Products will be loaded dynamically from Firebase -->
+            <p style="text-align:center; grid-column: 1/-1; color: var(--text-secondary);">Loading premium gadgets...
+            </p>
+        </div>
+    </section>
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">Gadget<span>Sixty Nine</span></a>
+                <p>Gadget Sixty Nine is your ultimate destination for authentic premium gadgets. From the latest iPhones
+                    to pro-grade audio, we bring the future of technology to Bangladesh.</p>
+                <div class="social-links">
+                    <a href="#"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="#"><i class="ph ph-instagram-logo"></i></a>
+                    <a href="#"><i class="ph ph-youtube-logo"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Customer Support</h4>
+                <ul>
+                    <li><a href="#">Track Your Order</a></li>
+                    <li><a href="#">Warranty Policy</a></li>
+                    <li><a href="#">EMI Information</a></li>
+                    <li><a href="#">Shipping & Returns</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Trending Categories</h4>
+                <ul>
+                    <li><a href="#">Apple iPhone</a></li>
+                    <li><a href="#">Samsung Galaxy</a></li>
+                    <li><a href="#">Premium Audio</a></li>
+                    <li><a href="#">Smart Accessories</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Contact Us</h4>
+                <ul class="contact-list">
+                    <li><i class="ph ph-map-pin"></i> Bashundhara City, Level 6, Dhaka</li>
+                    <li><i class="ph ph-phone"></i> +880 1234 567890</li>
+                    <li><i class="ph ph-envelope"></i> support@gadget69.com</li>
+                </ul>
+                <div class="payment-methods" style="margin-top: 20px;">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">Safe & Secure
+                        Payment</p>
+                    <div style="display: flex; gap: 10px; font-size: 1.5rem; color: var(--text-secondary);">
+                        <i class="ph ph-credit-card"></i>
+                        <i class="ph ph-bank"></i>
+                        <i class="ph ph-wallet"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 Gadget Sixty Nine. All rights reserved. | <a href="admin.html"
+                    style="color: var(--primary-accent); opacity: 0.7;">Admin Access</a></p>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

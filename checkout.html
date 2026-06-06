@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Gadget Sixty Nine</title>
+    <script src="theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .checkout-page { padding: 120px 20px 80px; min-height: 70vh; }
+        .checkout-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+        @media (max-width: 768px) { .checkout-layout { grid-template-columns: 1fr; } }
+        
+        .checkout-form-container { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-primary); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); outline: none; font-family: inherit; }
+        .form-control:focus { border-color: var(--primary-accent); }
+        
+        .payment-methods { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .payment-method { display: flex; align-items: center; gap: 10px; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .payment-method:hover, .payment-method.active { border-color: var(--primary-accent); background: rgba(0, 102, 204, 0.05); }
+        .payment-method input { margin: 0; }
+        
+        .checkout-summary { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; height: fit-content; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.9rem; }
+        .summary-item-img { width: 40px; height: 40px; object-fit: contain; background: #f5f5f7; border-radius: 5px; padding: 5px; }
+        .summary-item-title { flex: 1; margin: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+        
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-secondary); }
+        .summary-total { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); font-weight: 700; font-size: 1.2rem; color: var(--text-primary); }
+        
+        /* Success Modal */
+        #success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--surface-color); padding: 50px; border-radius: 16px; text-align: center; max-width: 400px; }
+        .modal-content i { font-size: 4rem; color: #10b981; margin-bottom: 20px; }
+        .modal-content h2 { margin-bottom: 10px; }
+        .modal-content p { color: var(--text-secondary); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Gadget<span>Sixty Nine</span></a>
+            <div class="header-actions">
+                <a href="cart.html" class="nav-links" style="color:var(--text-secondary)">Back to Cart</a>
+                <button class="btn-icon" id="theme-toggle" title="Toggle Dark/Light Mode"><i class="ph ph-moon"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container checkout-page">
+        <h1 class="section-title" style="text-align: left; margin-bottom: 30px;">Checkout</h1>
+        
+        <div class="checkout-layout">
+            <!-- Form -->
+            <div class="checkout-form-container">
+                <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Shipping Information</h3>
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="c-name" class="form-control" required placeholder="John Doe">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="c-email" class="form-control" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="c-phone" class="form-control" required placeholder="+880 1XXX XXXXXX">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Address</label>
+                        <textarea id="c-address" class="form-control" rows="3" required placeholder="House, Road, Area, City"></textarea>
+                    </div>
+                    
+                    <h3 style="margin: 40px 0 20px; font-size: 1.2rem;">Payment Method</h3>
+                    <div class="payment-methods">
+                        <label class="payment-method active">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <i class="ph ph-money" style="font-size: 1.5rem; color: #10b981;"></i>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">Cash on Delivery</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">Pay when you receive the product</div>
+                            </div>
+                        </label>
+                        <label class="payment-method">
+                            <input type="radio" name="payment" value="bkash">
+                            <i class="ph ph-device-mobile" style="font-size: 1.5rem; color: #e11471;"></i>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">bKash Payment</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">Pay securely via bKash</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 30px;">Place Order</button>
+                </form>
+            </div>
+
+            <!-- Summary -->
+            <div class="checkout-summary">
+                <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Order Summary</h3>
+                <div id="checkout-items" style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <!-- Items injected by JS -->
+                </div>
+                
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="summary-subtotal">৳ 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="summary-total">৳ 0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal">
+        <div class="modal-content">
+            <i class="ph ph-check-circle"></i>
+            <h2>Order Placed Successfully!</h2>
+            <p>Your order ID is <strong id="order-id">#12345</strong>. We will contact you shortly for confirmation.</p>
+            <a href="index.html" class="btn-primary">Return to Store</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom" style="border-top:none; padding-top:0;">
+                <p>&copy; 2026 Gadget Sixty Nine. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="checkout.js"></script>
+</body>
+</html>

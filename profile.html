@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Gadget Sixty Nine</title>
+    <script src="theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-page { padding: 120px 20px 80px; min-height: 70vh; }
+        .profile-layout { display: grid; grid-template-columns: 1fr 3fr; gap: 40px; }
+        @media (max-width: 768px) { .profile-layout { grid-template-columns: 1fr; } }
+        
+        .profile-sidebar { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; height: fit-content; text-align: center; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--primary-accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 15px; font-weight: 700; }
+        
+        .profile-content { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; }
+        
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .order-table th, .order-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .order-table th { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+        
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        
+        .btn-logout { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin-top: 20px; width: 100%; }
+        .btn-logout:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Gadget<span>Sixty Nine</span></a>
+            <div class="header-actions">
+                <a href="index.html" class="nav-links" style="color:var(--text-secondary)">Store</a>
+                <button class="btn-icon" id="theme-toggle" title="Toggle Dark/Light Mode"><i class="ph ph-moon"></i></button>
+                <a href="cart.html" class="btn-icon"><i class="ph ph-shopping-cart"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container profile-page">
+        <div class="profile-layout">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="avatar" id="user-avatar">U</div>
+                <h3 id="user-name" style="margin-bottom: 5px;">User Name</h3>
+                <p id="user-email" style="color: var(--text-secondary); font-size: 0.9rem;">user@example.com</p>
+                <button class="btn-logout" id="logout-btn"><i class="ph ph-sign-out"></i> Logout</button>
+            </div>
+
+            <!-- Content -->
+            <div class="profile-content">
+                <h2 style="margin-bottom: 20px;">Order History</h2>
+                <div style="overflow-x: auto;">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <!-- Orders injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom" style="border-top:none; padding-top:0;">
+                <p>&copy; 2026 Gadget Sixty Nine. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="profile.js"></script>
+</body>
+</html>

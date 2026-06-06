@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Gadget Sixty Nine</title>
+    <script src="theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .details-container { padding: 120px 20px 80px; min-height: 80vh; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        @media (max-width: 768px) { .details-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+        .details-image-box { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; position: sticky; top: 120px; }
+        .details-image-box img { width: 100%; height: auto; object-fit: contain; }
+
+        .details-info { padding-top: 10px; }
+        .details-brand { color: var(--primary-accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-bottom: 10px; display: block; }
+        .details-title { font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 15px; line-height: 1.2; }
+        .details-price { font-size: 2rem; font-weight: 700; color: var(--text-primary); margin: 20px 0; display: flex; align-items: center; gap: 15px; }
+        .details-old-price { font-size: 1.2rem; text-decoration: line-through; color: var(--text-secondary); font-weight: 400; }
+
+        .specs-container { margin-top: 40px; }
+        .specs-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .specs-list { list-style: none; }
+        .specs-item { padding: 12px 0; border-bottom: 1px solid var(--border-color); color: var(--text-primary); display: grid; grid-template-columns: 1fr 2fr; gap: 15px; }
+        .specs-label { font-weight: 600; color: var(--text-secondary); }
+
+        .action-btns { display: flex; gap: 15px; margin-top: 40px; }
+        .btn-large { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; }
+        
+        #loading-details { text-align: center; padding: 100px 0; }
+
+        /* Reviews & Ratings Styling */
+        .reviews-container { margin-top: 60px; border-top: 1px solid var(--border-color); padding-top: 40px; }
+        .reviews-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 50px; margin-top: 30px; }
+        @media (max-width: 768px) { .reviews-layout { grid-template-columns: 1fr; gap: 30px; } }
+        
+        .rating-summary-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; text-align: center; height: fit-content; }
+        .big-rating { font-size: 3.5rem; font-weight: 800; color: var(--text-primary); line-height: 1; }
+        .rating-stars { color: #fbbf24; font-size: 1.5rem; margin: 15px 0; display: flex; justify-content: center; gap: 4px; }
+        
+        .reviews-list { display: flex; flex-direction: column; gap: 20px; }
+        .review-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .review-author { font-weight: 600; color: var(--text-primary); }
+        .review-stars { color: #fbbf24; font-size: 0.95rem; display: flex; gap: 2px; }
+        .review-date { color: var(--text-secondary); font-size: 0.8rem; }
+        .review-comment { color: var(--text-primary); font-size: 0.95rem; line-height: 1.5; }
+        
+        .write-review-card { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; margin-top: 30px; }
+        .star-rating-selector { display: flex; gap: 8px; font-size: 1.8rem; margin: 10px 0 20px; }
+        .star-rating-selector i { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; }
+        .star-rating-selector i.active, .star-rating-selector i:hover { color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header id="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Gadget<span>Sixty Nine</span></a>
+            <div class="header-actions">
+                <button class="btn-icon" id="theme-toggle" title="Toggle Dark/Light Mode"><i class="ph ph-moon"></i></button>
+                <a href="cart.html" class="btn-icon">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="cart-count" id="cart-count-badge">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container details-container">
+        <div id="loading-details">
+            <i class="ph ph-circle-notch" style="font-size: 3rem; animation: spin 1s linear infinite;"></i>
+            <p style="margin-top: 20px;">Fetching product details...</p>
+        </div>
+
+        <div class="details-grid" id="details-content" style="display: none;">
+            <!-- Left Side: Image -->
+            <div class="details-image-box">
+                <img id="d-image" src="" alt="">
+            </div>
+
+            <!-- Right Side: Info -->
+            <div class="details-info">
+                <span class="details-brand" id="d-brand"></span>
+                <h1 class="details-title" id="d-title"></h1>
+                
+                <div class="details-price">
+                    <span id="d-price"></span>
+                    <span class="details-old-price" id="d-old-price"></span>
+                </div>
+
+                <div class="specs-container">
+                    <h3 class="specs-title">Specifications</h3>
+                    <ul class="specs-list" id="d-specs">
+                        <!-- Specs injected here -->
+                    </ul>
+                </div>
+
+                <div class="action-btns">
+                    <button id="add-to-cart-btn" class="btn-secondary btn-large">
+                        <i class="ph ph-shopping-cart-simple"></i> Add to Cart
+                    </button>
+                    <button id="buy-now-btn" class="btn-primary btn-large">
+                        <i class="ph ph-lightning"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reviews Section -->
+        <div id="reviews-section" class="reviews-container" style="display: none;">
+            <h2 class="specs-title" style="font-size: 1.5rem; margin-bottom: 10px;">Customer Reviews</h2>
+            <div class="reviews-layout">
+                <!-- Left: Rating Summary -->
+                <div class="rating-summary-card">
+                    <div class="big-rating" id="avg-rating-value">0.0</div>
+                    <div class="rating-stars" id="avg-rating-stars">
+                        <!-- Stars will be injected here -->
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;" id="total-reviews-count">0 reviews</p>
+                </div>
+
+                <!-- Right: Reviews List & Write Review Form -->
+                <div>
+                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;"><i class="ph ph-chat-centered-text"></i> Customer Feedback</h3>
+                    <div class="reviews-list" id="reviews-list-container">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+
+                    <!-- Write Review Section -->
+                    <div class="write-review-card" id="write-review-container">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 10px;"><i class="ph ph-pencil-line"></i> Write a Customer Review</h3>
+                        
+                        <!-- Logged In Form -->
+                        <form id="review-form" style="display: none;">
+                            <div class="form-group">
+                                <label style="display:block; margin-bottom:8px; font-weight:500;">Your Rating</label>
+                                <div class="star-rating-selector" id="rating-star-selector">
+                                    <i class="ph ph-star" data-value="1"></i>
+                                    <i class="ph ph-star" data-value="2"></i>
+                                    <i class="ph ph-star" data-value="3"></i>
+                                    <i class="ph ph-star" data-value="4"></i>
+                                    <i class="ph ph-star" data-value="5"></i>
+                                </div>
+                                <input type="hidden" id="review-rating-value" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label style="display:block; margin-bottom:8px; font-weight:500;">Your Feedback / Review</label>
+                                <textarea id="review-comment-input" class="form-control" rows="4" required placeholder="What did you like or dislike about this gadget?"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="padding: 10px 20px; font-size: 0.95rem; margin-top: 10px;">Submit Review</button>
+                        </form>
+
+                        <!-- Guest Message -->
+                        <div id="review-guest-message" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            <p>You must be signed in to leave a review.</p>
+                            <a href="login.html" class="btn-secondary" style="display:inline-block; margin-top:10px; padding: 8px 16px; font-size: 0.9rem; text-decoration:none;">Sign In Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom" style="border-top:none; padding-top:0;">
+                <p>&copy; 2026 Gadget Sixty Nine. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="product-details.js"></script>
+</body>
+</html>

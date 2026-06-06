@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Gadget Sixty Nine</title>
+    <script src="theme.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Admin specific styles */
+        body { background-color: var(--bg-color); }
+        .admin-container { max-width: 1000px; margin: 100px auto; padding: 20px; }
+        
+        /* Auth Section */
+        #auth-section { max-width: 400px; margin: 0 auto; background: var(--surface-color); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; outline: none; }
+        .form-control:focus { border-color: var(--primary-accent); }
+        
+        /* Dashboard Section */
+        #dashboard-section { display: none; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        
+        .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+        
+        .admin-card { background: var(--surface-color); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); }
+        .admin-card h3 { margin-bottom: 20px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        
+        /* Product Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+        .product-img-mini { width: 50px; height: 50px; object-fit: contain; background: #f5f5f7; border-radius: 8px; padding: 5px; }
+        
+        .btn-danger { background: rgba(220, 38, 38, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
+        .btn-danger:hover { background: #ef4444; color: white; }
+        
+        .btn-secondary { background: var(--surface-hover); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+        .btn-secondary:hover { background: var(--border-color); }
+
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; gap: 15px;}
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Active tab in Admin Nav */
+        .nav-links a.active {
+            color: var(--primary-accent) !important;
+            font-weight: 700 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header id="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Gadget<span>Sixty Nine</span> <small style="font-size: 0.75rem; background: var(--primary-accent); color: white !important; -webkit-text-fill-color: white !important; padding: 4px 10px; border-radius: 8px; margin-left: 8px; font-weight: 700; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.5px;">Admin Panel</small></a>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-link active" onclick="switchTab('products')" style="display: flex; align-items: center; gap: 6px;"><i class="ph ph-package"></i> Products</a>
+                <a href="#" class="nav-link" onclick="switchTab('orders')" style="display: flex; align-items: center; gap: 6px;"><i class="ph ph-shopping-cart"></i> Orders</a>
+            </nav>
+
+            <div class="header-actions" style="gap: 15px;">
+                <button class="btn-icon" id="theme-toggle" title="Toggle Dark/Light Mode"><i class="ph ph-moon"></i></button>
+                <a href="index.html" class="btn-icon" title="View Store"><i class="ph ph-house"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Please wait...</p>
+    </div>
+
+    <div class="container admin-container">
+        
+        <!-- Auth Section -->
+        <div id="auth-section">
+            <h2 style="margin-bottom: 10px;">Admin Login</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">Access your store dashboard</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" class="form-control" required placeholder="admin@gadgetsixtynine.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-control" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Login</button>
+            </form>
+            <p id="login-error" style="color: #ef4444; margin-top: 15px; font-size: 0.9rem; display: none;"></p>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <button id="logout-btn" class="btn-secondary"><i class="ph ph-sign-out"></i> Logout</button>
+            </div>
+
+            <div class="admin-grid">
+                <!-- Add Product Form -->
+                <div class="admin-card">
+                    <h3><i class="ph ph-plus-circle"></i> Add New Product</h3>
+                    <form id="add-product-form">
+                        <div class="form-group">
+                            <label>Product Title</label>
+                            <input type="text" id="p-title" class="form-control" required placeholder="e.g. iPhone 15 Pro">
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="p-category" class="form-control" required>
+                                <option value="Smartphone">Smartphone</option>
+                                <option value="Smartwatch">Smartwatch</option>
+                                <option value="Audio">Audio</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <select id="p-brand" class="form-control" required>
+                                <option value="Apple">Apple</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="OnePlus">OnePlus</option>
+                                <option value="Oppo">Oppo</option>
+                                <option value="Vivo">Vivo</option>
+                                <option value="Realme">Realme</option>
+                                <option value="Honor">Honor</option>
+                                <option value="Xiaomi">Xiaomi</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Price (৳)</label>
+                            <input type="number" id="p-price" class="form-control" required placeholder="150000">
+                        </div>
+                        <div class="form-group">
+                            <label>Regular Price (Optional ৳)</label>
+                            <input type="number" id="p-old-price" class="form-control" placeholder="160000">
+                        </div>
+                        <div class="form-group">
+                            <label>Product Image URL</label>
+                            <input type="url" id="p-image-url" class="form-control" required placeholder="https://example.com/image.jpg">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 5px;">* Copy any image address from Google and paste here.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Product Description / Specs</label>
+                            <textarea id="p-description" class="form-control" rows="5" placeholder="Display: 6.9 inch...&#10;Processor: A19 Pro...&#10;Battery: 5088mAh..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Badge (Optional)</label>
+                            <input type="text" id="p-badge" class="form-control" placeholder="e.g. New, Top Seller">
+                        </div>
+                        <input type="hidden" id="p-id">
+                        <button type="submit" id="submit-btn" class="btn-primary" style="width: 100%;">Add Product</button>
+                        <button type="button" id="cancel-edit-btn" class="btn-secondary" style="width: 100%; margin-top: 10px; display: none;">Cancel Edit</button>
+                    </form>
+                </div>
+
+                <!-- Product List -->
+                <div class="admin-card">
+                    <!-- Products Tab -->
+                    <div id="products-tab">
+                        <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                            <h3 style="margin-bottom: 0;"><i class="ph ph-package"></i> Product Inventory</h3>
+                            <button id="seed-db-btn" class="btn-primary" style="background: #10b981; padding: 8px 16px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                                <i class="ph ph-database"></i> Seed Sample Products
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product Details</th>
+                                        <th>Price</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product-table-body">
+                                    <!-- Products will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Orders Tab (New) -->
+                    <div id="orders-tab" style="display: none;">
+                        <div class="admin-header" style="margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 0;"><i class="ph ph-shopping-cart"></i> Customer Orders</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="order-table-body">
+                                    <!-- Orders will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
