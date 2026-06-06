@@ -1,8 +1,5 @@
 # Gadget Sixty Nine - Premium Tech E-commerce Ecosystem
 
-**Course Name:** Web and Internet Programming Lab  
-**Project Title:** Gadget Sixty Nine - A Premium Tech E-commerce Ecosystem  
-
 Gadget Sixty Nine is a high-performance, responsive e-commerce web application tailored for the premium consumer electronics market in Bangladesh. Utilizing a serverless architecture, this platform features a clean modern aesthetic, reactive user interfaces, secure authentication, real-time database transactions, and a robust administrative control center.
 
 ---
@@ -44,7 +41,7 @@ Gadget Sixty Nine is a high-performance, responsive e-commerce web application t
 ## 📂 Project Structure
 
 ```text
-gadget-store/
+. (Repository Root)
 ├── assets/                  # Images and graphics assets
 ├── admin.html               # Admin Dashboard view
 ├── admin.js                 # Admin CRUD & order operations script
@@ -73,8 +70,8 @@ gadget-store/
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/gadget-store.git
-   cd gadget-store
+   git clone https://github.com/your-username/gadget-sixtynine.git
+   cd gadget-sixtynine
    ```
 
 2. **Setup Firebase Database:**
@@ -125,12 +122,3 @@ service cloud.firestore {
   }
 }
 ```
-
----
-
-## 👥 Course & Developer Info
-
-* **Developer:** [Your Name]
-* **Course:** Web and Internet Programming Lab (CSE)
-* **Semester:** [Your Semester]
-* **University:** [Your University]
