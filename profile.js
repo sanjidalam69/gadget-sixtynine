@@ -1,4 +1,5 @@
-import { db } from './firebase-config.js';
+import { auth, db } from './firebase-config.js';
+import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('user-name').textContent = currentUser.name || 'User';
     document.getElementById('user-email').textContent = currentUser.email;
     document.getElementById('user-avatar').textContent = (currentUser.name ? currentUser.name.charAt(0) : 'U').toUpperCase();
+
+    // Check if user is admin to reveal secret admin panel link
+    const emailLower = currentUser.email ? currentUser.email.toLowerCase().trim() : '';
+    const isAdmin = currentUser.role === 'admin' || 
+                    emailLower.startsWith('admin@') || 
+                    emailLower === 'admin@gadgetsixtynine.com' ||
+                    emailLower === 'admin@gadget69.com';
+
+    if (isAdmin) {
+        const adminBtn = document.getElementById('admin-panel-link');
+        if (adminBtn) adminBtn.style.display = 'block';
+    }
     
     // Load Orders
     loadOrders(currentUser.email);
@@ -64,7 +77,12 @@ async function loadOrders(email) {
 }
 
 // Logout
-document.getElementById('logout-btn').addEventListener('click', () => {
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+    } catch (e) {
+        console.error("Signout error:", e);
+    }
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
 });

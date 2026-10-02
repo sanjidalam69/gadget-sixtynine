@@ -54,6 +54,9 @@
         .star-rating-selector { display: flex; gap: 8px; font-size: 1.8rem; margin: 10px 0 20px; }
         .star-rating-selector i { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; }
         .star-rating-selector i.active, .star-rating-selector i:hover { color: #fbbf24; }
+        
+        .form-control { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; outline: none; transition: border-color 0.2s; }
+        .form-control:focus { border-color: var(--primary-accent); }
     </style>
 </head>
 <body>
@@ -168,10 +171,52 @@
     </div>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-bottom" style="border-top:none; padding-top:0;">
-                <p>&copy; 2026 Gadget Sixty Nine. All rights reserved.</p>
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">Gadget<span>Sixty Nine</span></a>
+                <p>Gadget Sixty Nine is your ultimate destination for authentic premium gadgets. From the latest iPhones
+                    to pro-grade audio, we bring the future of technology to Bangladesh.</p>
+                <div class="social-links">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="ph ph-instagram-logo"></i></a>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="ph ph-youtube-logo"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Customer Support</h4>
+                <ul>
+                    <li><a href="profile.html"><i class="ph ph-package" style="font-size: 0.9rem; margin-right: 5px;"></i>Track Your Order</a></li>
+                    <li><a href="javascript:void(0)" onclick="alert('Warranty Policy:\n\n• 7 Days Replacement Guarantee for hardware defects\n• 1 Year Official Brand Warranty on Smartphones\n• 6 Months Service Warranty on Audio & Wearables\n\nContact support@gadgetsixtynine.com for quick support.');"><i class="ph ph-shield-check" style="font-size: 0.9rem; margin-right: 5px;"></i>Warranty Policy</a></li>
+                    <li><a href="javascript:void(0)" onclick="alert('EMI Information:\n\n• 0% Interest EMI available up to 12 Months with 20+ leading banks in Bangladesh\n• Applicable on orders above ৳15,000\n• Card payment required at checkout');"><i class="ph ph-percent" style="font-size: 0.9rem; margin-right: 5px;"></i>EMI Information</a></li>
+                    <li><a href="javascript:void(0)" onclick="alert('Shipping & Returns:\n\n• Dhaka City: Next-Day Express Delivery (৳80)\n• Outside Dhaka: 48-72 Hours via Courier (৳150)\n• 7 Days Hassle-free Return if defective');"><i class="ph ph-truck" style="font-size: 0.9rem; margin-right: 5px;"></i>Shipping & Returns</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Contact Us</h4>
+                <ul class="contact-list">
+                    <li><i class="ph ph-map-pin"></i> Bashundhara City, Level 6, Dhaka</li>
+                    <li><i class="ph ph-phone"></i> <a href="tel:+8801234567890" style="color: inherit;">+880 1234 567890</a></li>
+                    <li><i class="ph ph-envelope"></i> <a href="mailto:support@gadgetsixtynine.com" style="color: inherit;">support@gadgetsixtynine.com</a></li>
+                </ul>
+                <div class="payment-methods" style="margin-top: 25px;">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">We Accept</p>
+                    <div class="payment-badges-grid">
+                        <span class="pay-badge" title="bKash Payment"><span class="pay-dot" style="background: #e2136e;"></span>bKash</span>
+                        <span class="pay-badge" title="Nagad Payment"><span class="pay-dot" style="background: #f7941d;"></span>Nagad</span>
+                        <span class="pay-badge" title="Visa Card"><i class="ph-bold ph-credit-card" style="color: #3b82f6;"></i>Visa</span>
+                        <span class="pay-badge" title="Mastercard"><i class="ph-bold ph-credit-card" style="color: #ef4444;"></i>Mastercard</span>
+                        <span class="pay-badge" title="Cash on Delivery"><i class="ph-bold ph-money" style="color: #10b981;"></i>Cash on Delivery</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <p>&copy; 2026 Gadget Sixty Nine. All rights reserved.</p>
+            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 0.8rem; color: var(--text-secondary);"><i class="ph ph-shield-check" style="color: #22c55e;"></i> 100% Authentic Products</span>
             </div>
         </div>
     </footer>

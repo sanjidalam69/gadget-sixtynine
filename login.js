@@ -21,10 +21,24 @@ window.toggleForm = function(type) {
     }
 }
 
+// Helper to identify admin
+function checkIsAdmin(email) {
+    if (!email) return false;
+    const lower = email.toLowerCase().trim();
+    return lower === 'admin@gadgetsixtynine.com' || 
+           lower === 'admin@gadget69.com' || 
+           lower.startsWith('admin@');
+}
+
 // Redirect if already logged in (Local check for quick UI, proper Firebase auth state is better for production)
 document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('currentUser')) {
-        window.location.href = 'profile.html';
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        if (currentUser.role === 'admin' || checkIsAdmin(currentUser.email)) {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'profile.html';
+        }
     }
 });
 
@@ -87,10 +101,21 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+        const isAdmin = checkIsAdmin(user.email);
         
         // Save to local storage for quick UI access
-        localStorage.setItem('currentUser', JSON.stringify({ name: user.displayName || 'User', email: user.email }));
-        window.location.href = 'profile.html';
+        localStorage.setItem('currentUser', JSON.stringify({ 
+            name: user.displayName || (isAdmin ? 'Admin' : 'User'), 
+            email: user.email,
+            role: isAdmin ? 'admin' : 'customer'
+        }));
+
+        // Role-based redirection
+        if (isAdmin) {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'profile.html';
+        }
     } catch (error) {
         console.error("Login Error: ", error);
         errorEl.textContent = "Invalid email or password!";

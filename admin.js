@@ -55,6 +55,7 @@ loginForm.addEventListener('submit', async (e) => {
 // 3. Handle Logout
 logoutBtn.addEventListener('click', async () => {
     showLoading();
+    localStorage.removeItem('currentUser');
     await signOut(auth);
     hideLoading();
 });
@@ -284,7 +285,9 @@ async function loadOrders() {
                 <td>#${orderId.slice(0, 8)}</td>
                 <td>
                     <strong>${customerName}</strong><br>
-                    <small>${customerPhone}</small>
+                    <small style="color:var(--text-primary);">${customerPhone}</small><br>
+                    <small style="color:var(--text-secondary);">${order.shippingInfo ? (order.shippingInfo.email || order.userEmail || '') : ''}</small><br>
+                    <small style="color:var(--text-secondary); font-size:0.75rem;">${order.shippingInfo ? (order.shippingInfo.address || '') : ''}</small>
                 </td>
                 <td>${order.items ? order.items.length : 0} Items</td>
                 <td>৳ ${totalAmount.toLocaleString()}</td>

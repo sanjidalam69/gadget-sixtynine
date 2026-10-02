@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     updateCartBadge();
@@ -263,9 +263,31 @@ async function loadReviews(productId) {
 
             const dateStr = review.createdAt ? new Date(review.createdAt.seconds * 1000).toLocaleDateString() : 'Recent';
             const starsHtml = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
+            const likedBy = review.likedBy || [];
+            const likesCount = likedBy.length;
+
+            // Render simple replies list
+            let repliesHtml = '';
+            if (review.replies && review.replies.length > 0) {
+                review.replies.forEach(reply => {
+                    repliesHtml += `
+                        <div style="font-size: 0.85rem; margin-top: 6px; padding: 6px 12px; background: var(--bg-color); border-radius: 6px; border: 1px solid var(--border-color);">
+                            <strong>${reply.name}:</strong> ${reply.comment}
+                        </div>
+                    `;
+                });
+            }
+
+            const repliesContainerHtml = repliesHtml 
+                ? `<div style="margin-left: 20px; margin-top: 10px; border-left: 2px solid var(--border-color); padding-left: 10px;">
+                     ${repliesHtml}
+                   </div>`
+                : '';
             
             const card = document.createElement('div');
             card.className = 'review-card';
+            card.style.cssText = 'margin-bottom: 20px;';
             card.innerHTML = `
                 <div class="review-header">
                     <span class="review-author">${review.name || 'Anonymous'}</span>
@@ -274,7 +296,24 @@ async function loadReviews(productId) {
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                     <span class="review-date">${dateStr}</span>
                 </div>
-                <p class="review-comment">${review.comment}</p>
+                <p class="review-comment" style="margin-bottom: 12px;">${review.comment}</p>
+                
+                <!-- Simple Like and Reply Buttons -->
+                <div style="display: flex; gap: 15px; font-size: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    <span onclick="toggleLikeReview('${review.id}')" style="cursor: pointer; font-weight: 600; color: var(--primary-accent);">👍 Like (${likesCount})</span>
+                    <span onclick="toggleReplyForm('${review.id}')" style="cursor: pointer; font-weight: 600; color: var(--text-secondary);">💬 Reply</span>
+                </div>
+
+                <!-- Existing Replies -->
+                ${repliesContainerHtml}
+
+                <!-- Reply Input Form (Hidden by default) -->
+                <div id="reply-form-${review.id}" style="display: none; margin-left: 20px; margin-top: 10px;">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="reply-input-${review.id}" class="form-control" placeholder="Write a reply..." style="padding: 8px; font-size: 0.8rem; flex: 1; border-radius: 6px;" onkeypress="if(event.key === 'Enter') submitReply('${review.id}')">
+                        <button onclick="submitReply('${review.id}')" class="btn-primary" style="padding: 8px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer;">Submit</button>
+                    </div>
+                </div>
             `;
             reviewsListContainer.appendChild(card);
         });
@@ -398,3 +437,103 @@ function setupReviewForm(productId) {
         };
     }
 }
+
+// --- Dynamic Likes and Replies Logic ---
+window.toggleLikeReview = async (reviewId) => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        alert("You must be signed in to like reviews!");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const reviewRef = doc(db, "reviews", reviewId);
+        const reviewSnap = await getDoc(reviewRef);
+        
+        if (reviewSnap.exists()) {
+            const reviewData = reviewSnap.data();
+            let likedBy = reviewData.likedBy || [];
+            
+            if (likedBy.includes(currentUser.email)) {
+                // Unlike
+                likedBy = likedBy.filter(email => email !== currentUser.email);
+            } else {
+                // Like
+                likedBy.push(currentUser.email);
+            }
+            
+            await updateDoc(reviewRef, { likedBy: likedBy });
+            
+            // Reload reviews to show the updated likes count
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            loadReviews(productId);
+        }
+    } catch (err) {
+        console.error("Error liking review:", err);
+    }
+};
+
+window.toggleReplyForm = (reviewId) => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        alert("You must be signed in to reply!");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const form = document.getElementById(`reply-form-${reviewId}`);
+    if (form) {
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        if (form.style.display === 'block') {
+            const input = document.getElementById(`reply-input-${reviewId}`);
+            if (input) input.focus();
+        }
+    }
+};
+
+window.submitReply = async (reviewId) => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        alert("You must be signed in to reply!");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const input = document.getElementById(`reply-input-${reviewId}`);
+    const comment = input ? input.value.trim() : '';
+    
+    if (!comment) return;
+
+    try {
+        const reviewRef = doc(db, "reviews", reviewId);
+        const reviewSnap = await getDoc(reviewRef);
+        
+        if (reviewSnap.exists()) {
+            const reviewData = reviewSnap.data();
+            let replies = reviewData.replies || [];
+            
+            const newReply = {
+                name: currentUser.name || 'User',
+                email: currentUser.email,
+                comment: comment,
+                createdAt: { seconds: Math.floor(Date.now() / 1000) }
+            };
+            
+            replies.push(newReply);
+            await updateDoc(reviewRef, { replies: replies });
+            
+            if (input) input.value = '';
+            const form = document.getElementById(`reply-form-${reviewId}`);
+            if (form) form.style.display = 'none';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            loadReviews(productId);
+        }
+    } catch (err) {
+        console.error("Error submitting reply:", err);
+        alert("Failed to submit reply. Check your connection.");
+    }
+};

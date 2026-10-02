@@ -64,8 +64,8 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
     if(cart.length === 0) return;
     
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userEmail = currentUser ? currentUser.email : 'guest';
+    const inputEmail = document.getElementById('c-email').value.trim();
+    const userEmail = currentUser ? currentUser.email : (inputEmail || 'guest');
     
     // Create order object for Firebase
     const order = {
@@ -77,6 +77,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
         userEmail: userEmail,
         shippingInfo: {
             name: document.getElementById('c-name').value,
+            email: inputEmail,
             phone: document.getElementById('c-phone').value,
             address: document.getElementById('c-address').value
         }
